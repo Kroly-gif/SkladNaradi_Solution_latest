@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DataEntity.Base;
 using DataEntity.Data; // Pro jistotu
 
 namespace DataEntity.Data
 {
-    public class Vypujcka
+    public class Vypujcka : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
 
         public int ZakaznikId { get; set; }
 

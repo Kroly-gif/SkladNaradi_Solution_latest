@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using DataEntity.Base;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DataEntity.Data
 {
-    public class Zakaznik
+    public class Zakaznik : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         public string Jmeno { get; set; } = string.Empty;

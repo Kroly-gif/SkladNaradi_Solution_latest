@@ -1,11 +1,12 @@
 ﻿#nullable disable
+using DataEntity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace DataEntity
+namespace DataEntity.Base
 {
     public abstract class BaseModel : IDataErrorInfo
     {
@@ -25,7 +26,7 @@ namespace DataEntity
                 throw new ArgumentException("Invalid property name", propertyName);
 
             string error = string.Empty;
-            var value = this.GetType().GetProperty(propertyName).GetValue(this, null);
+            var value = GetType().GetProperty(propertyName).GetValue(this, null);
             var results = new List<ValidationResult>(1);
             var context = new ValidationContext(this, null, null) { MemberName = propertyName };
 

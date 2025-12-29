@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataEntity.Migrations
 {
     [DbContext(typeof(PujcovnaContext))]
-    [Migration("20251210104613_PridaniCeny")]
-    partial class PridaniCeny
+    [Migration("20251229214505_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,67 +21,60 @@ namespace DataEntity.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.11")
-                .HasAnnotation("Proxies:ChangeTracking", false)
-                .HasAnnotation("Proxies:CheckEquality", false)
-                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DataEntity.Naradi", b =>
+            modelBuilder.Entity("DataEntity.Data.Naradi", b =>
                 {
-                    b.Property<int>("NaradiId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NaradiId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CenaZaDen")
-                        .HasColumnType("int");
+                    b.Property<decimal>("CenaZaDen")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("DatumVytvoreni")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("Dostupnost")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Hmotnost")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("JeDostupne")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Nazev")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Popis")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Poznamka")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("Umisteni")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vykon")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("NaradiId");
+                    b.HasKey("Id");
 
                     b.ToTable("Naradi");
                 });
 
-            modelBuilder.Entity("DataEntity.Vypujcka", b =>
+            modelBuilder.Entity("DataEntity.Data.Vypujcka", b =>
                 {
-                    b.Property<int>("VypujckaId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VypujckaId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Cena")
                         .HasColumnType("decimal(18,2)");
@@ -95,24 +88,16 @@ namespace DataEntity.Migrations
                     b.Property<DateTime>("DatumVypujcky")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DatumVytvoreni")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("NaradiId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Penale")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<int>("ZakaznikId")
                         .HasColumnType("int");
 
-                    b.HasKey("VypujckaId");
+                    b.HasKey("Id");
 
                     b.HasIndex("NaradiId");
 
@@ -121,65 +106,59 @@ namespace DataEntity.Migrations
                     b.ToTable("Vypujcky");
                 });
 
-            modelBuilder.Entity("DataEntity.Zakaznik", b =>
+            modelBuilder.Entity("DataEntity.Data.Zakaznik", b =>
                 {
-                    b.Property<int>("ZakaznikId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZakaznikId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Adresa")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Ban")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("DatumVytvoreni")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Jmeno")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Organizace")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Poznamka")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Prijmeni")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                    b.Property<string>("Telefon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TelefonniCislo")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("ZakaznikId");
+                    b.HasKey("Id");
 
                     b.ToTable("Zakaznici");
                 });
 
-            modelBuilder.Entity("DataEntity.Vypujcka", b =>
+            modelBuilder.Entity("DataEntity.Data.Vypujcka", b =>
                 {
-                    b.HasOne("DataEntity.Naradi", "Naradi")
+                    b.HasOne("DataEntity.Data.Naradi", "Naradi")
                         .WithMany("Vypujcky")
                         .HasForeignKey("NaradiId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataEntity.Zakaznik", "Zakaznik")
+                    b.HasOne("DataEntity.Data.Zakaznik", "Zakaznik")
                         .WithMany("Vypujcky")
                         .HasForeignKey("ZakaznikId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -190,12 +169,12 @@ namespace DataEntity.Migrations
                     b.Navigation("Zakaznik");
                 });
 
-            modelBuilder.Entity("DataEntity.Naradi", b =>
+            modelBuilder.Entity("DataEntity.Data.Naradi", b =>
                 {
                     b.Navigation("Vypujcky");
                 });
 
-            modelBuilder.Entity("DataEntity.Zakaznik", b =>
+            modelBuilder.Entity("DataEntity.Data.Zakaznik", b =>
                 {
                     b.Navigation("Vypujcky");
                 });

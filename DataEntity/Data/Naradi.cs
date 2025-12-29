@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using DataEntity.Base;
 
 namespace DataEntity.Data
 {
-    public class Naradi
+    // Musí tu být dvojtečka a BaseEntity
+    public class Naradi : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
-        [Required]
         public string Nazev { get; set; } = string.Empty;
 
         public string Vykon { get; set; } = string.Empty;
