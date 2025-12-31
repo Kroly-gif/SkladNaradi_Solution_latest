@@ -21,24 +21,26 @@ namespace PujcovnaApp.ViewModels
         public ICommand UlozitCommand { get; }
         public ICommand PridatCommand { get; }
         public ICommand SmazatCommand { get; }
-        public ICommand FiltrovatCommand { get; } // NOVÝ COMMAND
+        public ICommand FiltrovatCommand { get; }
 
         public PrehledNaradiVM()
         {
             NacistData();
+            // Tlačítko Uložit teď slouží hlavně pro úpravy (změna názvu, ceny existujícího nářadí)
             UlozitCommand = new RelayCommand(_ => Globals.UlozitData());
             PridatCommand = new RelayCommand(_ => PridatNovyZaznam());
             SmazatCommand = new RelayCommand(_ => SmazatZaznam());
-
-            // Logika filtrování
             FiltrovatCommand = new RelayCommand(_ => AplikovatFiltr());
         }
 
         private void NacistData()
         {
             if (Globals.Context == null) return;
+
+            // Načteme data z DB do paměti
             Globals.Context.Naradi.Load();
-            // Načteme všechna data
+
+            // Zobrazíme je v seznamu
             SeznamNaradi = new ObservableCollection<Naradi>(Globals.Context.Naradi.Local.ToList());
         }
 
@@ -46,15 +48,14 @@ namespace PujcovnaApp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(HledanyText))
             {
-                // Pokud je pole prázdné, načteme vše
                 NacistData();
             }
             else
             {
-                // Vyfiltrujeme podle Názvu NEBO Umístění (velká/malá písmena neřešíme díky ToLower)
+                // Poznámka: Pokud by 'Umisteni' neexistovalo v modelu, smaz tu část podmínky
                 var vyfiltrovano = Globals.Context.Naradi.Local
-                    .Where(n => n.Nazev.ToLower().Contains(HledanyText.ToLower()) ||
-                                n.Umisteni.ToLower().Contains(HledanyText.ToLower()))
+                    .Where(n => (n.Nazev != null && n.Nazev.ToLower().Contains(HledanyText.ToLower())) ||
+                                (n.Umisteni != null && n.Umisteni.ToLower().Contains(HledanyText.ToLower())))
                     .ToList();
 
                 SeznamNaradi = new ObservableCollection<Naradi>(vyfiltrovano);
@@ -66,13 +67,25 @@ namespace PujcovnaApp.ViewModels
             var noveNaradi = new Naradi
             {
                 Nazev = "Nové nářadí",
-                Dostupnost = true
+                Dostupnost = true,
+                CenaZaDen = 0 // Je dobré inicializovat i cenu
             };
 
+            // 1. Přidáme do kontextu (zatím má ID 0)
             Globals.Context.Naradi.Add(noveNaradi);
+
+            // 2. Oprava:
+            // Okamžitě uložíme do DB. Databáze vygeneruje ID a vrátí ho zpět.
+            // Nářadí tak bude mít unikátní ID hned od začátku.
+            Globals.Context.SaveChanges();
+
             VybraneNaradi = noveNaradi;
-            // Po přidání obnovíme seznam (zrušíme filtr, aby bylo nové nářadí vidět)
+
+            // Vyčistíme filtr, aby bylo nové nářadí vidět
             HledanyText = "";
+
+            // Znovunačtení není nutně potřeba (EF to aktualizuje sám), 
+            // ale pro jistotu aktualizujeme seznam v okně.
             NacistData();
         }
 
@@ -83,8 +96,11 @@ namespace PujcovnaApp.ViewModels
             if (MessageBox.Show($"Opravdu smazat {VybraneNaradi.Nazev}?", "Smazat", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 Globals.Context.Naradi.Remove(VybraneNaradi);
-                // Obnovit seznam
-                AplikovatFiltr();
+
+                // I zde je dobré smazání potvrdit hned do DB
+                Globals.Context.SaveChanges();
+
+                AplikovatFiltr(); // Aktualizuje seznam (zmizí smazané)
             }
         }
     }
